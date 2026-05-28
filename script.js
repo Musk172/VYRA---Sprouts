@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // Desktop overlay logic
     const desktopOverlay = document.getElementById('desktopOverlay');
     const closeOverlayBtn = document.getElementById('closeOverlay');
-    
+
     if (window.innerWidth > 768) {
         desktopOverlay.style.display = 'flex';
         setTimeout(() => {
             desktopOverlay.style.opacity = '1';
         }, 100);
     }
-    
+
     closeOverlayBtn.addEventListener('click', () => {
         desktopOverlay.style.opacity = '0';
         setTimeout(() => {
@@ -22,32 +22,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const landingOverlay = document.getElementById('landingOverlay');
     const exploreBtn = document.getElementById('exploreBtn');
 
-    // Animate landing content entrance
-    gsap.fromTo('.landing-illustration',
-        { opacity: 0, scale: 0.8, rotation: -10 },
-        { opacity: 1, scale: 1, rotation: 0, duration: 2, ease: "power2.out", delay: 0.1 }
+    // Page window opening from the middle animation (gorgeous outward expanding reveal)
+    gsap.fromTo(landingOverlay,
+        { 
+            clipPath: 'inset(45% 45% 45% 45% round 30px)',
+            opacity: 0
+        },
+        { 
+            clipPath: 'inset(0% 0% 0% 0% round 0px)',
+            opacity: 1,
+            duration: 1.4, 
+            ease: "power4.inOut",
+            delay: 0.2
+        }
     );
-    gsap.fromTo('.landing-logo', 
-        { opacity: 0, y: 30, scale: 0.9 },
-        { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power3.out", delay: 0.2 }
-    );
-    gsap.fromTo('.landing-title',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.6 }
-    );
-    gsap.fromTo('.landing-subtitle',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.8 }
-    );
-    gsap.fromTo('.explore-btn',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 1.0 }
-    );
+
 
     // 2. Main App Animation (Intersection Observer for Swipe Cards)
     const cards = document.querySelectorAll('.swipe-card');
     let doorsOpened = false;
-    
+
     // Hide all elements initially to prevent flashes
     cards.forEach(card => {
         gsap.set(card.querySelector('.card-bg'), { opacity: 0 });
@@ -64,35 +58,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = card.querySelector('.circular-calorie-badge');
         const glassElements = card.querySelectorAll('.nutrition-glass-card, .order-cta-container');
 
-        const cardTl = gsap.timeline({ 
+        const cardTl = gsap.timeline({
             defaults: { ease: "power3.out" },
             onComplete: () => card.classList.add('scroll-ready')
         });
 
-        cardTl.fromTo(bg, 
+        cardTl.fromTo(bg,
             { scale: 1.1, opacity: 0 },
             { scale: 1, opacity: 1, duration: 1.5, ease: "power2.out" }
         )
-        .fromTo(title,
-            { opacity: 0, x: -20 },
-            { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" },
-            "-=0.8"
-        )
-        .fromTo(subtitle,
-            { opacity: 0, x: -20 },
-            { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" },
-            "-=0.6"
-        )
-        .fromTo(badge,
-            { opacity: 0, scale: 0.5, rotation: 15 },
-            { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" },
-            "-=0.6"
-        )
-        .fromTo(glassElements,
-            { opacity: 0, y: 30, filter: "blur(10px)" },
-            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power2.out", stagger: 0.12 },
-            "-=0.6"
-        );
+            .fromTo(title,
+                { opacity: 0, x: -20 },
+                { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" },
+                "-=0.8"
+            )
+            .fromTo(subtitle,
+                { opacity: 0, x: -20 },
+                { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" },
+                "-=0.6"
+            )
+            .fromTo(badge,
+                { opacity: 0, scale: 0.5, rotation: 15 },
+                { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" },
+                "-=0.6"
+            )
+            .fromTo(glassElements,
+                { opacity: 0, y: 30, filter: "blur(10px)" },
+                { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power2.out", stagger: 0.12 },
+                "-=0.6"
+            );
     }
 
     const cardObserver = new IntersectionObserver((entries) => {
@@ -119,23 +113,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     const rect = card.getBoundingClientRect();
                     const normalized = rect.top / viewportHeight; // -1 to 1
                     const abs = Math.min(Math.abs(normalized), 1);
-                    
+
                     // Subtle scale down as card leaves center (1 down to 0.9)
                     const scale = 1 - (abs * 0.1);
                     // Dim slightly as it leaves center
                     const opacity = 1 - (abs * 0.6);
-                    
+
                     // Apply to inner layers
                     const bg = card.querySelector('.card-bg');
                     const grad = card.querySelector('.card-gradient');
                     const ui = card.querySelector('.card-ui');
-                    
+
                     if (bg && grad && ui) {
                         const transformStr = `scale(${scale})`;
                         bg.style.transform = transformStr;
                         grad.style.transform = transformStr;
                         ui.style.transform = transformStr;
-                        
+
                         bg.style.opacity = Math.max(opacity, 0);
                         ui.style.opacity = Math.max(opacity, 0);
                     }
@@ -144,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Click handler for opening the doors
+    // Click handler for opening the menu (sliding split-door opening reveal)
     exploreBtn.addEventListener('click', () => {
         const doorTl = gsap.timeline({
             onComplete: () => {
@@ -158,25 +152,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Fade out landing content
-        doorTl.to(['.landing-content', '.landing-illustration'], {
+        // Fade out the explore button quickly
+        doorTl.to(exploreBtn, {
             opacity: 0,
-            y: -20,
+            scale: 0.8,
             duration: 0.4,
-            ease: "power2.in"
-        })
-        // Open doors
-        .to('.door-left', {
+            ease: "power2.out"
+        });
+
+        // Slide the split doors out to the sides simultaneously
+        doorTl.to('.door-left', {
             x: "-100%",
             duration: 1.2,
             ease: "power4.inOut"
-        }, "+=0.1")
-        .to('.door-right', {
+        }, "-=0.2");
+
+        doorTl.to('.door-right', {
             x: "100%",
             duration: 1.2,
             ease: "power4.inOut"
         }, "-=1.2");
     });
+
 
     // 3. Cart Logic (pure CSS class-toggle — guaranteed to work on all mobile browsers)
     const cartToast = document.getElementById('cart-toast');
@@ -239,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Single document-level click handler covers all buttons
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (e.target.closest('.go-to-cart-btn')) {
             openCart();
             return;
@@ -296,8 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 { y: 0, xPercent: -50, autoAlpha: 1, duration: 0.6, ease: 'back.out(1.5)' }
             );
             toastTimeout = setTimeout(() => {
-                gsap.to(cartToast, { y: -100, autoAlpha: 0, duration: 0.4, ease: 'power2.in',
-                    onComplete: () => gsap.set(cartToast, { pointerEvents: 'none' }) });
+                gsap.to(cartToast, {
+                    y: -100, autoAlpha: 0, duration: 0.4, ease: 'power2.in',
+                    onComplete: () => gsap.set(cartToast, { pointerEvents: 'none' })
+                });
             }, 3000);
         }
     });
