@@ -233,6 +233,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItemsContainer.insertBefore(div, cartEmptyState);
             });
         }
+        
+        // Update all cart badges
+        const totalItems = cartItems.reduce((sum, item) => sum + item.qty, 0);
+        document.querySelectorAll('.cart-badge').forEach(badge => {
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        });
     }
 
     // Single document-level click handler covers all buttons
@@ -282,6 +293,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 cartItems.push({ image: bgUrl, title: titleText, qty: 1 });
             }
             renderCart();
+
+            // Button click animation
+            addBtn.classList.add('added');
+            const btnText = addBtn.querySelector('span');
+            const oldText = btnText.textContent;
+            btnText.textContent = 'Added!';
+            setTimeout(() => {
+                addBtn.classList.remove('added');
+                btnText.textContent = oldText;
+            }, 1500);
 
             toastImg.style.backgroundImage = `url('${bgUrl}')`;
             toastTitle.textContent = titleText;
