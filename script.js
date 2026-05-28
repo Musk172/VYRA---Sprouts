@@ -327,12 +327,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     confirmOrderBtn.addEventListener('click', () => {
         if (cartItems.length === 0) return;
-        confirmOrderBtn.textContent = 'Order Placed! ✓';
+        
+        // Generate an engaging WhatsApp message
+        let text = "Hello! 🌱 I'd like to place an order for some delicious VYRA Sprout Bowls:\n\n";
+        cartItems.forEach(item => {
+            text += `▪️ ${item.qty}x ${item.title}\n`;
+        });
+        text += "\nCan't wait to try them! 🥣✨";
+        
+        // Redirect to WhatsApp
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(whatsappUrl, '_blank');
+
+        // UI Feedback
+        confirmOrderBtn.textContent = 'Redirecting... ✓';
         confirmOrderBtn.style.background = '#3a6646';
         setTimeout(() => {
             cartItems = [];
             renderCart();
             confirmOrderBtn.style.background = '';
+            confirmOrderBtn.textContent = 'Confirm Order';
             closeCart();
         }, 1500);
     });
