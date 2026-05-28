@@ -106,9 +106,13 @@ body {
     height: 100%;
     background-image: url('assets/Peanut (2).jpeg');
     background-size: cover;
-    background-position: 100% center;
-    /* Shifted to 100% to show ingredients clearly with some space from the right */
+    background-position: center 40%; /* Shifted all bowl images slightly upward */
     z-index: 1;
+}
+
+/* First card needs specific horizontal alignment to show ingredients clearly */
+.swipe-card:first-of-type .card-bg {
+    background-position: 100% 40%;
 }
 
 /* Gradient Overlay for Text Readability */
